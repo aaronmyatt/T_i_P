@@ -1,0 +1,9 @@
+{
+    "templates": [
+        "./templates/cli.ts",
+        "./templates/server.ts",
+        "./templates/worker.ts",
+        "./templates/test.ts",
+        "./templates/trace.ts"
+    ]
+}
