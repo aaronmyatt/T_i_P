@@ -1,11 +1,16 @@
 {
   "tasks": {
-    "dev": "pd serve start.md --dev",
+    "dev": "pd serve backend/start.md --dev",
     "build": "pd build",
-    "start": "deno run --allow-all .pd/start/server.ts"
+    "start": "deno run --allow-all .pd/backend/start/server.ts"
   },
   "deploy": {
     "org": "aaronmyatt",
-    "app": "pipedown-today-i-piped"
+    "app": "pipedown-today-i-piped",
+    "entrypoint": ".pd/backend/start/server.ts",
+    "runtime": {
+      "entrypoint": ".pd/backend/start/server.ts",
+      "start": "deno task start"
+    }
   }
 }
