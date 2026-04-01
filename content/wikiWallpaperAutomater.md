@@ -7,7 +7,8 @@ description: A collection of notes and learnings about automating the process of
 
 Fetch image of the day from Wikimedia and use it as the wallpaper of a Mac
 
-## Usage potentional:
+## Usage
+
 ```bash
 deno compile .pd/wikiWallpaperAutomater/cli.ts
 ./dailyWallpaper
@@ -51,9 +52,8 @@ input.wikiJson = await response.json();
 input.imageUrl = input.wikiJson["image"]["image"]["source"];
 ```
 
----
-
 ## Download the Image
+
 Now that we have a reference to the image of the day, we can use the "download" Deno library to save the image from Wikimedia locally
 ```ts
 import { download } from "https://deno.land/x/download/mod.ts";
@@ -65,11 +65,9 @@ try {
 }
 ```
 
----
-
 ### Set Wallpaper
 
-Finally, we the super Dax library to run a simple (awkward af) Applescript to save override the current wallpaper. 
+Finally, we the super Dax library to run a simple (awkward af) Applescript to save override the current wallpaper.
 
 > I can't overstate how much Googling it took to find a workable `osascript` command. Need to dig into the AppleScript documentation at some point!
 

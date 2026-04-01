@@ -1,0 +1,128 @@
+{
+  "mdPath": "/Users/aaronmyatt/pipes/T_i_P/backend/start.md",
+  "fileName": "start",
+  "dir": "/Users/aaronmyatt/pipes/T_i_P/.pd/backend/start",
+  "absoluteDir": "/Users/aaronmyatt/pipes/T_i_P/.pd/backend/start",
+  "config": {
+    "templates": [
+      "./templates/cli.ts",
+      "./templates/server.ts",
+      "./templates/worker.ts",
+      "./templates/test.ts",
+      "./templates/trace.ts",
+      "./templates/devServer.ts"
+    ],
+    "exclude": [
+      "node_modules",
+      "dist",
+      "/content/*",
+      "/frontend/*"
+    ]
+  },
+  "name": "TIP",
+  "cleanName": "TIP",
+  "steps": [
+    {
+      "code": "//console.log({input})\n",
+      "range": [
+        6,
+        6
+      ],
+      "name": "TIP",
+      "funcName": "TIP",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "//console.log({input})\n",
+      "sourceMap": {
+        "codeStartLine": 5,
+        "codeEndLine": 8,
+        "headingLine": 0
+      },
+      "headingLevel": 1,
+      "originalName": "TIP",
+      "description": "A simple Deno Deploy application to serve markdown Pipedown files that showcase\nwhat I have learned, or generally want to publish and share.",
+      "originalDescription": "A simple Deno Deploy application to serve markdown Pipedown files that showcase\nwhat I have learned, or generally want to publish and share."
+    },
+    {
+      "code": "  const slug = $p.get(input, '/route/pathname/groups/slug')\n  console.log({slug})\n  //$p.get(input, '/route/pathname/groups/companyId')\n  input.response = await serveFile(input.request, `./content/${slug}.md`);\n",
+      "range": [
+        20,
+        20
+      ],
+      "name": "Get Pipe",
+      "funcName": "GetPipe",
+      "inList": true,
+      "language": "ts",
+      "originalCode": "  const slug = $p.get(input, '/route/pathname/groups/slug')\n  console.log({slug})\n  //$p.get(input, '/route/pathname/groups/companyId')\n  input.response = await serveFile(input.request, `./content/${slug}.md`);\n",
+      "sourceMap": {
+        "codeStartLine": 13,
+        "codeEndLine": 19,
+        "headingLine": 9
+      },
+      "headingLevel": 2,
+      "originalName": "Get Pipe",
+      "description": "The get pipes route serves up the markdown files in the `content` folder as JSON.\nroute: /api/pipe/:slug",
+      "originalDescription": "The get pipes route serves up the markdown files in the `content` folder as JSON.\nroute: /api/pipe/:slug",
+      "config": {
+        "routes": [
+          "/api/pipe/:slug"
+        ]
+      }
+    },
+    {
+      "code": "  import extractFrontmatter from \"extractFrontmatter\";\n\n  const files = await Deno.readDir(\"./content\");\n  const pipes = [];\n  for await (const file of files) {\n      if (file.isFile && file.name.endsWith(\".md\")) {\n          const { frontmatter } = await extractFrontmatter.process({path: `./content/${file.name}`})\n          if(frontmatter.draft) continue; // skip drafts\n          pipes.push({\n              name: file.name,\n              file: file.name,\n              slug: file.name.replace(\".md\", \"\"),\n              blurb: frontmatter.description,\n          })\n      }\n  }\n\n  input.response = new Response(JSON.stringify(pipes), {\n      headers: { \"Content-Type\": \"application/json\" },\n  });\n",
+      "range": [
+        36,
+        36
+      ],
+      "name": "List Pipes",
+      "funcName": "ListPipes",
+      "inList": true,
+      "language": "ts",
+      "originalCode": "  import extractFrontmatter from \"extractFrontmatter\";\n\n  const files = await Deno.readDir(\"./content\");\n  const pipes = [];\n  for await (const file of files) {\n      if (file.isFile && file.name.endsWith(\".md\")) {\n          const { frontmatter } = await extractFrontmatter.process({path: `./content/${file.name}`})\n          if(frontmatter.draft) continue; // skip drafts\n          pipes.push({\n              name: file.name,\n              file: file.name,\n              slug: file.name.replace(\".md\", \"\"),\n              blurb: frontmatter.description,\n          })\n      }\n  }\n\n  input.response = new Response(JSON.stringify(pipes), {\n      headers: { \"Content-Type\": \"application/json\" },\n  });\n",
+      "sourceMap": {
+        "codeStartLine": 23,
+        "codeEndLine": 45,
+        "headingLine": 20
+      },
+      "headingLevel": 2,
+      "originalName": "List Pipes",
+      "description": "The list pipes route serves up a JSON array of the markdown files in the `content` folder.\nroute: /api/pipes",
+      "originalDescription": "The list pipes route serves up a JSON array of the markdown files in the `content` folder.\nroute: /api/pipes",
+      "config": {
+        "routes": [
+          "/api/pipes"
+        ]
+      }
+    },
+    {
+      "code": "  import { serveDir, serveFile } from \"jsr:@std/http/file-server\";\n\n  input.response = await serveDir(input.request, {\n      fsRoot: \"./frontend\",\n      showIndex: true,\n  });\n",
+      "range": [
+        52,
+        52
+      ],
+      "name": "Static Files",
+      "funcName": "StaticFiles",
+      "inList": true,
+      "language": "ts",
+      "originalCode": "  import { serveDir, serveFile } from \"jsr:@std/http/file-server\";\n\n  input.response = await serveDir(input.request, {\n      fsRoot: \"./frontend\",\n      showIndex: true,\n  });\n",
+      "sourceMap": {
+        "codeStartLine": 50,
+        "codeEndLine": 58,
+        "headingLine": 46
+      },
+      "headingLevel": 2,
+      "originalName": "Static Files",
+      "description": "The static files route serves up the frontend files in the `frontend` folder.\nnot: /response",
+      "originalDescription": "The static files route serves up the frontend files in the `frontend` folder.\nnot: /response",
+      "config": {
+        "not": [
+          "/response"
+        ]
+      }
+    }
+  ],
+  "rawSource": "# TIP\n\nA simple Deno Deploy application to serve markdown Pipedown files that showcase\nwhat I have learned, or generally want to publish and share.\n\n```ts\n//console.log({input})\n```\n\n## Get Pipe\n\nThe get pipes route serves up the markdown files in the `content` folder as JSON.\n- route: /api/pipe/:slug\n- ```ts\n    const slug = $p.get(input, '/route/pathname/groups/slug')\n    console.log({slug})\n    //$p.get(input, '/route/pathname/groups/companyId')\n    input.response = await serveFile(input.request, `./content/${slug}.md`);\n    ```\n\n## List Pipes\nThe list pipes route serves up a JSON array of the markdown files in the `content` folder.\n- route: /api/pipes\n- ```ts\n    import extractFrontmatter from \"extractFrontmatter\";\n\n    const files = await Deno.readDir(\"./content\");\n    const pipes = [];\n    for await (const file of files) {\n        if (file.isFile && file.name.endsWith(\".md\")) {\n            const { frontmatter } = await extractFrontmatter.process({path: `./content/${file.name}`})\n            if(frontmatter.draft) continue; // skip drafts\n            pipes.push({\n                name: file.name,\n                file: file.name,\n                slug: file.name.replace(\".md\", \"\"),\n                blurb: frontmatter.description,\n            })\n        }\n    }\n\n    input.response = new Response(JSON.stringify(pipes), {\n        headers: { \"Content-Type\": \"application/json\" },\n    });\n    ```\n\n## Static Files\n\nThe static files route serves up the frontend files in the `frontend` folder.\n- not: /response\n- ```ts\n    import { serveDir, serveFile } from \"jsr:@std/http/file-server\";\n\n    input.response = await serveDir(input.request, {\n        fsRoot: \"./frontend\",\n        showIndex: true,\n    });\n    ```\n",
+  "pipeDescription": "A simple Deno Deploy application to serve markdown Pipedown files that showcase\nwhat I have learned, or generally want to publish and share.",
+  "originalPipeDescription": "A simple Deno Deploy application to serve markdown Pipedown files that showcase\nwhat I have learned, or generally want to publish and share."
+}

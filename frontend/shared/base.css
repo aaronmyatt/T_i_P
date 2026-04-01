@@ -76,6 +76,7 @@ select {
 .brand-lockup {
   display: grid;
   gap: 2px;
+  cursor: pointer;
 }
 
 .brand-mark {

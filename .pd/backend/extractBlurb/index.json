@@ -1,0 +1,123 @@
+{
+  "mdPath": "/Users/aaronmyatt/pipes/T_i_P/backend/extractBlurb.md",
+  "fileName": "extractBlurb",
+  "dir": "/Users/aaronmyatt/pipes/T_i_P/.pd/backend/extractBlurb",
+  "absoluteDir": "/Users/aaronmyatt/pipes/T_i_P/.pd/backend/extractBlurb",
+  "config": {
+    "templates": [
+      "./templates/cli.ts",
+      "./templates/server.ts",
+      "./templates/worker.ts",
+      "./templates/test.ts",
+      "./templates/trace.ts",
+      "./templates/devServer.ts"
+    ],
+    "exclude": [
+      "node_modules",
+      "dist",
+      "/content/*",
+      "/frontend/*"
+    ]
+  },
+  "name": "Extract Content Blurbs from Markdown Files",
+  "cleanName": "ExtractContentBlurbsfromMarkdownFiles",
+  "steps": [
+    {
+      "code": "input.file = await Deno.readTextFile(input.path)\n// .catch(() => null); <- LLM keeps trying to catch this but I want the error to propagate and get caught by the pipeline\n",
+      "range": [
+        12,
+        12
+      ],
+      "name": "Get File",
+      "funcName": "GetFile",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "input.file = await Deno.readTextFile(input.path)\n// .catch(() => null); <- LLM keeps trying to catch this but I want the error to propagate and get caught by the pipeline\n",
+      "sourceMap": {
+        "codeStartLine": 8,
+        "codeEndLine": 12,
+        "headingLine": 4
+      },
+      "headingLevel": 2,
+      "originalName": "Get File",
+      "description": "Read the file from disk using Deno standard helpers and pass it on",
+      "originalDescription": "Read the file from disk using Deno standard helpers and pass it on"
+    },
+    {
+      "code": "import { parse } from \"jsr:@std/yaml\";\n\nconst frontmatterMatch = input.file.match(/---\\s*([\\s\\S]*?)\\s*---/) || [];\nconst frontmatter = parse($p.get(frontmatterMatch, '/1'))\nif(frontmatter && frontmatter.description)\n    $p.set(input, '/blurb', frontmatter.description.trim())\n",
+      "range": [
+        19,
+        19
+      ],
+      "name": "Extract from Frontmatter",
+      "funcName": "ExtractfromFrontmatter",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "import { parse } from \"jsr:@std/yaml\";\n\nconst frontmatterMatch = input.file.match(/---\\s*([\\s\\S]*?)\\s*---/) || [];\nconst frontmatter = parse($p.get(frontmatterMatch, '/1'))\nif(frontmatter && frontmatter.description)\n    $p.set(input, '/blurb', frontmatter.description.trim())\n",
+      "sourceMap": {
+        "codeStartLine": 16,
+        "codeEndLine": 24,
+        "headingLine": 13
+      },
+      "headingLevel": 2,
+      "originalName": "Extract from Frontmatter",
+      "description": "Regex match annoyingly returns `null` when there is no match, so we have to be defensive and default to an empty array to avoid errors when trying to access the capture groups.",
+      "originalDescription": "Regex match annoyingly returns `null` when there is no match, so we have to be defensive and default to an empty array to avoid errors when trying to access the capture groups."
+    },
+    {
+      "code": "const contentWithoutTitle = input.file.replace(/^#.*\\n/, \"\").trim();\ninput.blurb = contentWithoutTitle.slice(0, 200) + (contentWithoutTitle.length > 200 ? \"...\" : \"\");\n",
+      "range": [
+        28,
+        28
+      ],
+      "name": "Extract from Content",
+      "funcName": "ExtractfromContent",
+      "inList": true,
+      "language": "ts",
+      "originalCode": "const contentWithoutTitle = input.file.replace(/^#.*\\n/, \"\").trim();\ninput.blurb = contentWithoutTitle.slice(0, 200) + (contentWithoutTitle.length > 200 ? \"...\" : \"\");\n",
+      "sourceMap": {
+        "codeStartLine": 28,
+        "codeEndLine": 32,
+        "headingLine": 25
+      },
+      "headingLevel": 2,
+      "originalName": "Extract from Content",
+      "description": "not: /blurb",
+      "originalDescription": "not: /blurb",
+      "config": {
+        "not": [
+          "/blurb"
+        ]
+      }
+    },
+    {
+      "code": "input.blurb = \"\";\n",
+      "range": [
+        39,
+        39
+      ],
+      "name": "Return empty blurb if no content",
+      "funcName": "Returnemptyblurbifnocontent",
+      "inList": true,
+      "language": "ts",
+      "originalCode": "input.blurb = \"\";\n",
+      "sourceMap": {
+        "codeStartLine": 35,
+        "codeEndLine": 38,
+        "headingLine": 33
+      },
+      "headingLevel": 2,
+      "originalName": "Return empty blurb if no content",
+      "description": "not: /blurb",
+      "originalDescription": "not: /blurb",
+      "config": {
+        "not": [
+          "/blurb"
+        ]
+      }
+    }
+  ],
+  "rawSource": "# Extract Content Blurbs from Markdown Files\n\nLet's expect a blurb meta data value in frontmatter, and if it's not there, we'll take the first 200 characters of the file after the h1 title as the blurb. This will be used in the pipe list view to give users a preview of the content of each pipe.\n\n## Get File\n\nRead the file from disk using Deno standard helpers and pass it on\n\n```ts\ninput.file = await Deno.readTextFile(input.path)\n// .catch(() => null); <- LLM keeps trying to catch this but I want the error to propagate and get caught by the pipeline\n```\n\n## Extract from Frontmatter\nRegex match annoyingly returns `null` when there is no match, so we have to be defensive and default to an empty array to avoid errors when trying to access the capture groups.\n\n```ts\nimport { parse } from \"jsr:@std/yaml\";\n\nconst frontmatterMatch = input.file.match(/---\\s*([\\s\\S]*?)\\s*---/) || [];\nconst frontmatter = parse($p.get(frontmatterMatch, '/1'))\nif(frontmatter && frontmatter.description)\n    $p.set(input, '/blurb', frontmatter.description.trim())\n```\n\n## Extract from Content\n\n- not: /blurb\n  ```ts\n  const contentWithoutTitle = input.file.replace(/^#.*\\n/, \"\").trim();\n  input.blurb = contentWithoutTitle.slice(0, 200) + (contentWithoutTitle.length > 200 ? \"...\" : \"\");\n  ```\n\n## Return empty blurb if no content\n- not: /blurb\n  ```ts\n  input.blurb = \"\";\n  ```\n",
+  "pipeDescription": "Let's expect a blurb meta data value in frontmatter, and if it's not there, we'll take the first 200 characters of the file after the h1 title as the blurb. This will be used in the pipe list view to give users a preview of the content of each pipe.",
+  "originalPipeDescription": "Let's expect a blurb meta data value in frontmatter, and if it's not there, we'll take the first 200 characters of the file after the h1 title as the blurb. This will be used in the pipe list view to give users a preview of the content of each pipe."
+}

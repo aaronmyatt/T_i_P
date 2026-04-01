@@ -1,12 +1,18 @@
+---
+timestamp: 2026-01-05T12:00:00Z
+---
 # Github Pages Deployment
 
 ## Libraries
+
 We are using the [Dax library](https://jsr.io/@david/dax#shell) to handle all interactions with the command line.
+
 ```ts
 import $ from 'jsr:@david/dax';
 ```
 
 ## read gitignore so we can exclude later
+
 ```ts
 const gitIgnorePath = $.path(Deno.cwd()).join(".gitignore");
 try {

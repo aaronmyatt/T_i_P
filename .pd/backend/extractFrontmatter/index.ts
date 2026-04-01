@@ -1,0 +1,29 @@
+// deno-lint-ignore-file ban-unused-ignore no-unused-vars require-await
+import Pipe from "jsr:@pd/pdpipe@0.2.2";
+import $p from "jsr:@pd/pointers@0.1.1";
+
+import "jsr:@std/dotenv/load";
+import rawPipe from "./index.json" with {type: "json"};
+import { parse } from "jsr:@std/yaml";
+
+export async function GetFile (input, opts) {
+    input.file = await Deno.readTextFile(input.path)
+// .catch(() => null); <- LLM keeps trying to catch this but I want the error to propagate and get caught by the pipeline
+
+}
+export async function ExtractfromFrontmatter (input, opts) {
+    
+
+const frontmatterMatch = input.file.match(/---\s*([\s\S]*?)\s*---/) || [];
+input.frontmatter = parse($p.get(frontmatterMatch, '/1'))
+
+}
+
+const funcSequence = [
+GetFile, ExtractfromFrontmatter
+]
+const pipe = Pipe(funcSequence, rawPipe);
+const process = (input={}) => pipe.process(input);
+pipe.json = rawPipe;
+export default pipe;
+export { pipe, rawPipe, process };

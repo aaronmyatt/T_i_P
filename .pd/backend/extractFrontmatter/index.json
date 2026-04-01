@@ -1,0 +1,71 @@
+{
+  "mdPath": "/Users/aaronmyatt/pipes/T_i_P/backend/extractFrontmatter.md",
+  "fileName": "extractFrontmatter",
+  "dir": "/Users/aaronmyatt/pipes/T_i_P/.pd/backend/extractFrontmatter",
+  "absoluteDir": "/Users/aaronmyatt/pipes/T_i_P/.pd/backend/extractFrontmatter",
+  "config": {
+    "templates": [
+      "./templates/cli.ts",
+      "./templates/server.ts",
+      "./templates/worker.ts",
+      "./templates/test.ts",
+      "./templates/trace.ts",
+      "./templates/devServer.ts"
+    ],
+    "exclude": [
+      "node_modules",
+      "dist",
+      "/content/*",
+      "/frontend/*"
+    ]
+  },
+  "name": "Extract Frontmatter from Markdown Files",
+  "cleanName": "ExtractFrontmatterfromMarkdownFiles",
+  "steps": [
+    {
+      "code": "input.file = await Deno.readTextFile(input.path)\n// .catch(() => null); <- LLM keeps trying to catch this but I want the error to propagate and get caught by the pipeline\n",
+      "range": [
+        12,
+        12
+      ],
+      "name": "Get File",
+      "funcName": "GetFile",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "input.file = await Deno.readTextFile(input.path)\n// .catch(() => null); <- LLM keeps trying to catch this but I want the error to propagate and get caught by the pipeline\n",
+      "sourceMap": {
+        "codeStartLine": 8,
+        "codeEndLine": 12,
+        "headingLine": 4
+      },
+      "headingLevel": 2,
+      "originalName": "Get File",
+      "description": "Read the file from disk using Deno standard helpers and pass it on",
+      "originalDescription": "Read the file from disk using Deno standard helpers and pass it on"
+    },
+    {
+      "code": "import { parse } from \"jsr:@std/yaml\";\n\nconst frontmatterMatch = input.file.match(/---\\s*([\\s\\S]*?)\\s*---/) || [];\ninput.frontmatter = parse($p.get(frontmatterMatch, '/1'))\n",
+      "range": [
+        19,
+        19
+      ],
+      "name": "Extract from Frontmatter",
+      "funcName": "ExtractfromFrontmatter",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "import { parse } from \"jsr:@std/yaml\";\n\nconst frontmatterMatch = input.file.match(/---\\s*([\\s\\S]*?)\\s*---/) || [];\ninput.frontmatter = parse($p.get(frontmatterMatch, '/1'))\n",
+      "sourceMap": {
+        "codeStartLine": 16,
+        "codeEndLine": 22,
+        "headingLine": 13
+      },
+      "headingLevel": 2,
+      "originalName": "Extract from Frontmatter",
+      "description": "Regex match annoyingly returns `null` when there is no match, so we have to be defensive and default to an empty array to avoid errors when trying to access the capture groups.",
+      "originalDescription": "Regex match annoyingly returns `null` when there is no match, so we have to be defensive and default to an empty array to avoid errors when trying to access the capture groups."
+    }
+  ],
+  "rawSource": "# Extract Frontmatter from Markdown Files\n\nGrab the frontmatter from markdown files to use as metadata for our pipes. This will allow us to display a blurb for each pipe in the pipe list view, and also potentially use other metadata in the future.\n\n## Get File\n\nRead the file from disk using Deno standard helpers and pass it on\n\n```ts\ninput.file = await Deno.readTextFile(input.path)\n// .catch(() => null); <- LLM keeps trying to catch this but I want the error to propagate and get caught by the pipeline\n```\n\n## Extract from Frontmatter\nRegex match annoyingly returns `null` when there is no match, so we have to be defensive and default to an empty array to avoid errors when trying to access the capture groups.\n\n```ts\nimport { parse } from \"jsr:@std/yaml\";\n\nconst frontmatterMatch = input.file.match(/---\\s*([\\s\\S]*?)\\s*---/) || [];\ninput.frontmatter = parse($p.get(frontmatterMatch, '/1'))\n```\n",
+  "pipeDescription": "Grab the frontmatter from markdown files to use as metadata for our pipes. This will allow us to display a blurb for each pipe in the pipe list view, and also potentially use other metadata in the future.",
+  "originalPipeDescription": "Grab the frontmatter from markdown files to use as metadata for our pipes. This will allow us to display a blurb for each pipe in the pipe list view, and also potentially use other metadata in the future."
+}

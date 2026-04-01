@@ -1,0 +1,11 @@
+{
+  "tasks": {
+    "dev": "pd serve start.md --dev",
+    "build": "pd build",
+    "start": "deno run --allow-all .pd/start/server.ts"
+  },
+  "deploy": {
+    "org": "aaronmyatt",
+    "app": "pipedown-today-i-piped"
+  }
+}

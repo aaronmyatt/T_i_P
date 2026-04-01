@@ -1,0 +1,24 @@
+{
+  "imports": {
+    "/": "./",
+    "./": "./",
+    "$p": "jsr:@pd/pointers@0.1.1",
+    "start": "./backend/start/index.ts",
+    "/.claude/worktrees/eloquent-panini/start": "./.claude/worktrees/eloquent-panini/start/index.ts",
+    "/.claude/worktrees/reverent-murdock/start": "./.claude/worktrees/reverent-murdock/start/index.ts",
+    "extractBlurb": "./backend/extractBlurb/index.ts",
+    "/backend/extractBlurb": "./backend/extractBlurb/index.ts",
+    "/backend/start": "./backend/start/index.ts",
+    "extractFrontmatter": "./backend/extractFrontmatter/index.ts",
+    "/backend/extractFrontmatter": "./backend/extractFrontmatter/index.ts"
+  },
+  "lint": {
+    "include": [
+      ".pd/**/*.ts"
+    ],
+    "exclude": [
+      ".pd/**/*.json",
+      ".pd/**/*.md"
+    ]
+  }
+}

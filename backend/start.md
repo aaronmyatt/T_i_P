@@ -10,40 +10,35 @@ what I have learned, or generally want to publish and share.
 ## Get Pipe
 
 The get pipes route serves up the markdown files in the `content` folder as JSON.
-- route: /pipe/:slug
+- route: /api/pipe/:slug
 - ```ts
     const slug = $p.get(input, '/route/pathname/groups/slug')
+    console.log({slug})
     //$p.get(input, '/route/pathname/groups/companyId')
-    input.response = serveFile(input.request, `./content/${slug}.md`);
+    input.response = await serveFile(input.request, `./content/${slug}.md`);
     ```
 
 ## List Pipes
 The list pipes route serves up a JSON array of the markdown files in the `content` folder.
 - route: /api/pipes
 - ```ts
+    import extractFrontmatter from "extractFrontmatter";
+
     const files = await Deno.readDir("./content");
     const pipes = [];
     for await (const file of files) {
         if (file.isFile && file.name.endsWith(".md")) {
+            const { frontmatter } = await extractFrontmatter.process({path: `./content/${file.name}`})
+            if(frontmatter.draft) continue; // skip drafts
             pipes.push({
+                name: file.name,
                 file: file.name,
                 slug: file.name.replace(".md", ""),
-                blurb: await Deno.readTextFile(`./content/${file.name}`).then((text) => {
-                    // return either the yaml frontmatter description, or the first 200 characters of the file after the h1 title
-                    const frontmatterMatch = text.match(/---\s*([\s\S]*?)\s*---/);
-                    if (frontmatterMatch) {
-                        const frontmatter = frontmatterMatch[1];
-                        const descriptionMatch = frontmatter.match(/description:\s*(.*)/);
-                        if (descriptionMatch) {
-                            return descriptionMatch[1].trim();
-                        }
-                    }
-                    const contentWithoutTitle = text.replace(/^#.*\n/, "").trim();
-                    return contentWithoutTitle.slice(0, 200) + (contentWithoutTitle.length > 200 ? "..." : "");
-                }),
-            });
+                blurb: frontmatter.description,
+            })
         }
     }
+
     input.response = new Response(JSON.stringify(pipes), {
         headers: { "Content-Type": "application/json" },
     });

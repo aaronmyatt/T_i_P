@@ -4,6 +4,13 @@
         "./templates/server.ts",
         "./templates/worker.ts",
         "./templates/test.ts",
-        "./templates/trace.ts"
+        "./templates/trace.ts",
+        "./templates/devServer.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "/content/*",
+        "/frontend/*"
     ]
 }

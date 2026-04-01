@@ -2,6 +2,7 @@
 timestamp: 2026-01-01T12:00:00Z
 name: AWS
 description: A collection of notes and learnings about AWS, starting with VPCs and ECS
+draft: true
 ---
 # AWS
 
