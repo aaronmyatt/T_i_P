@@ -1,0 +1,90 @@
+{
+  "mdPath": "/Users/aaronmyatt/pipes/T_i_P/content/wikiWallpaperAutomater.md",
+  "fileName": "wikiWallpaperAutomater",
+  "dir": "/Users/aaronmyatt/pipes/T_i_P/.pd/content/wikiWallpaperAutomater",
+  "absoluteDir": "/Users/aaronmyatt/pipes/T_i_P/.pd/content/wikiWallpaperAutomater",
+  "config": {
+    "templates": [
+      "./templates/cli.ts",
+      "./templates/server.ts",
+      "./templates/worker.ts",
+      "./templates/test.ts",
+      "./templates/trace.ts",
+      "./templates/devServer.ts"
+    ],
+    "exclude": [
+      "node_modules",
+      "dist",
+      "/content/*",
+      "/frontend/*"
+    ]
+  },
+  "name": "timestamp: 2026-01-04T12:00:00Z\nname: Wiki Wallpaper Automater\ndescription: A collection of notes and learnings about automating the process of fetching and setting the daily wallpaper from Wikimedia",
+  "cleanName": "timestamp20260104T120000ZnameWikiWallpaperAutomaterdescriptionAcollectionofnotesandlearningsaboutautomatingtheprocessoffetchingandsettingthedailywallpaperfromWikimedia",
+  "steps": [
+    {
+      "code": "let today = new Date();\nlet year = today.getFullYear();\nlet month = String(today.getMonth() + 1).padStart(2, \"0\");\nlet day = String(today.getDate()).padStart(2, \"0\");\nlet url =\n  `https://api.wikimedia.org/feed/v1/wikipedia/en/featured/${year}/${month}/${day}`;\n\nlet response = await fetch(url, {\n  headers: {\n    Authorization:\n      \"Bearer \" + $p.get(opts, '/config/wikiKey'),\n    \"Api-User-Agent\": `Pipedown (${$p.get(opts, '/config/myEmail')})`,\n  },\n});\ninput.wikiJson = await response.json();\ninput.imageUrl = input.wikiJson[\"image\"][\"image\"][\"source\"];\n",
+      "range": [
+        36,
+        36
+      ],
+      "name": "Call the WikiMedia API",
+      "funcName": "CalltheWikiMediaAPI",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "let today = new Date();\nlet year = today.getFullYear();\nlet month = String(today.getMonth() + 1).padStart(2, \"0\");\nlet day = String(today.getDate()).padStart(2, \"0\");\nlet url =\n  `https://api.wikimedia.org/feed/v1/wikipedia/en/featured/${year}/${month}/${day}`;\n\nlet response = await fetch(url, {\n  headers: {\n    Authorization:\n      \"Bearer \" + $p.get(opts, '/config/wikiKey'),\n    \"Api-User-Agent\": `Pipedown (${$p.get(opts, '/config/myEmail')})`,\n  },\n});\ninput.wikiJson = await response.json();\ninput.imageUrl = input.wikiJson[\"image\"][\"image\"][\"source\"];\n",
+      "sourceMap": {
+        "codeStartLine": 35,
+        "codeEndLine": 53,
+        "headingLine": 27
+      },
+      "headingLevel": 3,
+      "originalName": "Call the WikiMedia API",
+      "description": "Note that the header requirements are quite strict and you need to generate an\nAPI key Outputs:\ninput.wikiJson\ninput.imageUrl",
+      "originalDescription": "Note that the header requirements are quite strict and you need to generate an\nAPI key Outputs:\ninput.wikiJson\ninput.imageUrl"
+    },
+    {
+      "code": "import { download } from \"https://deno.land/x/download/mod.ts\";\n\ntry {\n  input.imageFile = await download(input.imageUrl);\n} catch (err) {\n  input.error = err;\n}\n",
+      "range": [
+        43,
+        43
+      ],
+      "name": "Download the Image",
+      "funcName": "DownloadtheImage",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "import { download } from \"https://deno.land/x/download/mod.ts\";\n\ntry {\n  input.imageFile = await download(input.imageUrl);\n} catch (err) {\n  input.error = err;\n}\n",
+      "sourceMap": {
+        "codeStartLine": 57,
+        "codeEndLine": 66,
+        "headingLine": 54
+      },
+      "headingLevel": 2,
+      "originalName": "Download the Image",
+      "description": "Now that we have a reference to the image of the day, we can use the \"download\" Deno library to save the image from Wikimedia locally",
+      "originalDescription": "Now that we have a reference to the image of the day, we can use the \"download\" Deno library to save the image from Wikimedia locally"
+    },
+    {
+      "code": "import _$ from \"https://deno.land/x/dax/mod.ts\";\ninput.osaout =\n  await _$`osascript -e 'tell application \"System Events\" to tell every desktop to set picture to \"${input.imageFile.fullPath}\"'`\n    .captureCombined();\n",
+      "range": [
+        55,
+        55
+      ],
+      "name": "Set Wallpaper",
+      "funcName": "SetWallpaper",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "import _$ from \"https://deno.land/x/dax/mod.ts\";\ninput.osaout =\n  await _$`osascript -e 'tell application \"System Events\" to tell every desktop to set picture to \"${input.imageFile.fullPath}\"'`\n    .captureCombined();\n",
+      "sourceMap": {
+        "codeStartLine": 73,
+        "codeEndLine": 79,
+        "headingLine": 67
+      },
+      "headingLevel": 3,
+      "originalName": "Set Wallpaper",
+      "description": "Finally, we the super Dax library to run a simple (awkward af) Applescript to save override the current wallpaper.\nI can't overstate how much Googling it took to find a workable `osascript` command. Need to dig into the AppleScript documentation at some point!",
+      "originalDescription": "Finally, we the super Dax library to run a simple (awkward af) Applescript to save override the current wallpaper.\nI can't overstate how much Googling it took to find a workable `osascript` command. Need to dig into the AppleScript documentation at some point!"
+    }
+  ],
+  "rawSource": "---\ntimestamp: 2026-01-04T12:00:00Z\nname: Wiki Wallpaper Automater\ndescription: A collection of notes and learnings about automating the process of fetching and setting the daily wallpaper from Wikimedia\n---\n# Wiki Wallpaper Fetcher\n\nFetch image of the day from Wikimedia and use it as the wallpaper of a Mac\n\n## Usage\n\n```bash\ndeno compile .pd/wikiWallpaperAutomater/cli.ts\n./dailyWallpaper\n```\n\n```bash\ndeno install -gf -n wikiWallpaperAutomater .pd/wikiWallpaperAutomater/cli.ts\ndailyWallpaper\n```\n\n```js skip\n// from a Pipedown .md file\n// or `pd repl`\nimport dailyWallpaper from \"./wikiWallpaperAutomater.ts\";\n```\n\n### Call the WikiMedia API\n\n> Note that the header requirements are quite strict and you need to generate an\n> API key Outputs:\n\n- input.wikiJson\n- input.imageUrl\n\n```ts\nlet today = new Date();\nlet year = today.getFullYear();\nlet month = String(today.getMonth() + 1).padStart(2, \"0\");\nlet day = String(today.getDate()).padStart(2, \"0\");\nlet url =\n  `https://api.wikimedia.org/feed/v1/wikipedia/en/featured/${year}/${month}/${day}`;\n\nlet response = await fetch(url, {\n  headers: {\n    Authorization:\n      \"Bearer \" + $p.get(opts, '/config/wikiKey'),\n    \"Api-User-Agent\": `Pipedown (${$p.get(opts, '/config/myEmail')})`,\n  },\n});\ninput.wikiJson = await response.json();\ninput.imageUrl = input.wikiJson[\"image\"][\"image\"][\"source\"];\n```\n\n## Download the Image\n\nNow that we have a reference to the image of the day, we can use the \"download\" Deno library to save the image from Wikimedia locally\n```ts\nimport { download } from \"https://deno.land/x/download/mod.ts\";\n\ntry {\n  input.imageFile = await download(input.imageUrl);\n} catch (err) {\n  input.error = err;\n}\n```\n\n### Set Wallpaper\n\nFinally, we the super Dax library to run a simple (awkward af) Applescript to save override the current wallpaper.\n\n> I can't overstate how much Googling it took to find a workable `osascript` command. Need to dig into the AppleScript documentation at some point!\n\n```ts\nimport _$ from \"https://deno.land/x/dax/mod.ts\";\ninput.osaout =\n  await _$`osascript -e 'tell application \"System Events\" to tell every desktop to set picture to \"${input.imageFile.fullPath}\"'`\n    .captureCombined();\n```\n"
+}

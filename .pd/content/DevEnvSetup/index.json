@@ -1,0 +1,218 @@
+{
+  "mdPath": "/Users/aaronmyatt/pipes/T_i_P/content/DevEnvSetup.md",
+  "fileName": "DevEnvSetup",
+  "dir": "/Users/aaronmyatt/pipes/T_i_P/.pd/content/DevEnvSetup",
+  "absoluteDir": "/Users/aaronmyatt/pipes/T_i_P/.pd/content/DevEnvSetup",
+  "config": {
+    "templates": [
+      "./templates/cli.ts",
+      "./templates/server.ts",
+      "./templates/worker.ts",
+      "./templates/test.ts",
+      "./templates/trace.ts",
+      "./templates/devServer.ts"
+    ],
+    "exclude": [
+      "node_modules",
+      "dist",
+      "/content/*",
+      "/frontend/*"
+    ]
+  },
+  "name": "timestamp: 2026-01-02T12:00:00Z\nname: DevEnvSetup\ndescription: A collection of notes and learnings about setting up the development environment",
+  "cleanName": "timestamp20260102T120000ZnameDevEnvSetupdescriptionAcollectionofnotesandlearningsaboutsettingupthedevelopmentenvironment",
+  "steps": [
+    {
+      "code": "import $ from 'jsr:@david/dax';\n",
+      "range": [
+        13,
+        13
+      ],
+      "name": "DevSetup",
+      "funcName": "DevSetup",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "import $ from 'jsr:@david/dax';\n",
+      "sourceMap": {
+        "codeStartLine": 9,
+        "codeEndLine": 12,
+        "headingLine": 5
+      },
+      "headingLevel": 1,
+      "originalName": "DevSetup",
+      "description": "Let's write a script to help install all the current (non-node) dependencies and run them inside a tmux shell - let's also install tmux 😂\nAs always, let's use [dax](https://jsr.io/@david/dax) to handle our shell interactions:",
+      "originalDescription": "Let's write a script to help install all the current (non-node) dependencies and run them inside a tmux shell - let's also install tmux 😂\nAs always, let's use [dax](https://jsr.io/@david/dax) to handle our shell interactions:"
+    },
+    {
+      "code": "input.quietUnlessError = async (cmd, successMessage, errorMessage) => {\n  const result = await $(cmd)\n  if (result.code !== 0) {\n    $.logError(result.stderr);\n    throw new Error(`${errorMessage}\n    Try it manually: ${cmd}` || `Failed: ${cmd}`);\n  }\n  $.logStep(successMessage || `Success: ${cmd}`);\n}\n",
+      "range": [
+        20,
+        20
+      ],
+      "name": "helper",
+      "funcName": "helper",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "input.quietUnlessError = async (cmd, successMessage, errorMessage) => {\n  const result = await $(cmd)\n  if (result.code !== 0) {\n    $.logError(result.stderr);\n    throw new Error(`${errorMessage}\n    Try it manually: ${cmd}` || `Failed: ${cmd}`);\n  }\n  $.logStep(successMessage || `Success: ${cmd}`);\n}\n",
+      "sourceMap": {
+        "codeStartLine": 15,
+        "codeEndLine": 26,
+        "headingLine": 13
+      },
+      "headingLevel": 2,
+      "originalName": "helper",
+      "description": "Made a small blunder here, should be `$.logError(result.stderr);` not `$.log.error(result.stderr);`",
+      "originalDescription": "Made a small blunder here, should be `$.logError(result.stderr);` not `$.log.error(result.stderr);`"
+    },
+    {
+      "code": "input.commandMissing = {\n  brew:       !(await $.commandExists('brew')),\n  bun:        !(await $.commandExists('bun')),\n  tmux:       !(await $.commandExists('tmux')),\n  datasette:  !(await $.commandExists('datasette')),\n  pocketbase: !($.path('./_pocketbase').isFileSync()),\n}\nconsole.log('Missing: ', input.commandMissing);\n",
+      "range": [
+        24,
+        24
+      ],
+      "name": "Check if commands exist",
+      "funcName": "Checkifcommandsexist",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "input.commandMissing = {\n  brew:       !(await $.commandExists('brew')),\n  bun:        !(await $.commandExists('bun')),\n  tmux:       !(await $.commandExists('tmux')),\n  datasette:  !(await $.commandExists('datasette')),\n  pocketbase: !($.path('./_pocketbase').isFileSync()),\n}\nconsole.log('Missing: ', input.commandMissing);\n",
+      "sourceMap": {
+        "codeStartLine": 28,
+        "codeEndLine": 38,
+        "headingLine": 27
+      },
+      "headingLevel": 2,
+      "originalName": "Check if commands exist"
+    },
+    {
+      "code": "input.errors = [`Brew is not installed.\nPlease install brew manually with this command:\n/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"\nand then run this script again`]\n",
+      "range": [
+        39,
+        39
+      ],
+      "name": "Install Homebrew",
+      "funcName": "InstallHomebrew",
+      "inList": true,
+      "language": "ts",
+      "originalCode": "input.errors = [`Brew is not installed.\nPlease install brew manually with this command:\n/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"\nand then run this script again`]\n",
+      "sourceMap": {
+        "codeStartLine": 46,
+        "codeEndLine": 52,
+        "headingLine": 39
+      },
+      "headingLevel": 2,
+      "originalName": "Install Homebrew",
+      "description": "1 hour rule:  I spent an hour trying to figure how to install brew via this script but kept running up against the same error:\n`Error: Not implemented: command`\nIt seems to be failing inside the Dax library, so there's a chance we could run it by using [`Deno.Command`](https://docs.deno.com/api/deno/~/Deno.Command) manually. However, I prefer a simple outcome rather than sinking more hours into something that would only result in a marginal improvement.\nNotice the use of `input.errors`. Pipedown uses this array internally to display caught errors from functins (codebocks). It will then skip all subsquent functions in the file. So we are piggybacking on this behaviour to bail out of the script early.\nif: /commandMissing/brew",
+      "originalDescription": "1 hour rule:  I spent an hour trying to figure how to install brew via this script but kept running up against the same error:\n`Error: Not implemented: command`\nIt seems to be failing inside the Dax library, so there's a chance we could run it by using [`Deno.Command`](https://docs.deno.com/api/deno/~/Deno.Command) manually. However, I prefer a simple outcome rather than sinking more hours into something that would only result in a marginal improvement.\nNotice the use of `input.errors`. Pipedown uses this array internally to display caught errors from functins (codebocks). It will then skip all subsquent functions in the file. So we are piggybacking on this behaviour to bail out of the script early.\nif: /commandMissing/brew",
+      "config": {
+        "checks": [
+          "/commandMissing/brew"
+        ]
+      }
+    },
+    {
+      "code": "await input.quietUnlessError(\n  `brew install bun`, \n  \"Success: Bun installed\", \n  \"Failed: Could not install Bun\"\n);\n",
+      "range": [
+        53,
+        53
+      ],
+      "name": "Install bun",
+      "funcName": "Installbun",
+      "inList": true,
+      "language": "ts",
+      "originalCode": "await input.quietUnlessError(\n  `brew install bun`, \n  \"Success: Bun installed\", \n  \"Failed: Could not install Bun\"\n);\n",
+      "sourceMap": {
+        "codeStartLine": 56,
+        "codeEndLine": 63,
+        "headingLine": 53
+      },
+      "headingLevel": 2,
+      "originalName": "Install bun",
+      "description": "I will replace this with Deno at the earliest opportunity, but so far Nuxt doesn't play nice with Deno.\nif: /commandMissing/bun",
+      "originalDescription": "I will replace this with Deno at the earliest opportunity, but so far Nuxt doesn't play nice with Deno.\nif: /commandMissing/bun",
+      "config": {
+        "checks": [
+          "/commandMissing/bun"
+        ]
+      }
+    },
+    {
+      "code": "await input.quietUnlessError(\n  `brew install tmux`, \n  \"Success: Tmux installed\", \n  \"Failed: Could not install tmux\"\n);\n",
+      "range": [
+        67,
+        67
+      ],
+      "name": "Install tmux",
+      "funcName": "Installtmux",
+      "inList": true,
+      "language": "ts",
+      "originalCode": "await input.quietUnlessError(\n  `brew install tmux`, \n  \"Success: Tmux installed\", \n  \"Failed: Could not install tmux\"\n);\n",
+      "sourceMap": {
+        "codeStartLine": 67,
+        "codeEndLine": 74,
+        "headingLine": 64
+      },
+      "headingLevel": 2,
+      "originalName": "Install tmux",
+      "description": "The average brew stdout is noisy as hell, I want it to be quite unless there's an error.\nif: /commandMissing/tmux",
+      "originalDescription": "The average brew stdout is noisy as hell, I want it to be quite unless there's an error.\nif: /commandMissing/tmux",
+      "config": {
+        "checks": [
+          "/commandMissing/tmux"
+        ]
+      }
+    },
+    {
+      "code": "    const result = await $`brew install pipx; pipx ensurepath; pipx install datasette; pipx inject datasette datasette-import; pipx install sqlite-utils;`\n      .stderr(\"piped\");\n    if(result.code !== 0) {\n      $.log.error(result.stderr);\n      throw new Error(\"Failed to install Datasette\");\n    }\n    $.log(\"Datasette + dependencies installed \");\n",
+      "range": [
+        84,
+        84
+      ],
+      "name": "Install datasette",
+      "funcName": "Installdatasette",
+      "inList": true,
+      "language": "ts",
+      "originalCode": "    const result = await $`brew install pipx; pipx ensurepath; pipx install datasette; pipx inject datasette datasette-import; pipx install sqlite-utils;`\n      .stderr(\"piped\");\n    if(result.code !== 0) {\n      $.log.error(result.stderr);\n      throw new Error(\"Failed to install Datasette\");\n    }\n    $.log(\"Datasette + dependencies installed \");\n",
+      "sourceMap": {
+        "codeStartLine": 81,
+        "codeEndLine": 90,
+        "headingLine": 75
+      },
+      "headingLevel": 2,
+      "originalName": "Install datasette",
+      "description": "https://docs.datasette.io/en/stable/installation.html#using-pipx\nhttps://datasette.io/plugins/datasette-import\nWe use Datasette to provide some additional sqlite functionality and data exploration capabilities. I'm still thinking about whether to host it alongside the app behind pocketbases auth!\nif: /commandMissing/datasette",
+      "originalDescription": "https://docs.datasette.io/en/stable/installation.html#using-pipx\nhttps://datasette.io/plugins/datasette-import\nWe use Datasette to provide some additional sqlite functionality and data exploration capabilities. I'm still thinking about whether to host it alongside the app behind pocketbases auth!\nif: /commandMissing/datasette",
+      "config": {
+        "checks": [
+          "/commandMissing/datasette"
+        ]
+      }
+    },
+    {
+      "code": "import { download } from \"https://deno.land/x/download/mod.ts\";\nawait download(\"https://github.com/pocketbase/pocketbase/releases/download/v0.22.21/pocketbase_0.22.21_darwin_amd64.zip\", {dir: \"/tmp\", file: 'pocketbase.zip'});\nawait $`unzip -o /tmp/pocketbase.zip -d /tmp/`;\nawait $`mv /tmp/pocketbase ./_pocketbase`;\nconst exists = $.path('./_pocketbase').isFileSync()\n$.log(`Pocketbase installed: ${exists}`);\n",
+      "range": [
+        106,
+        106
+      ],
+      "name": "Install pocketbase",
+      "funcName": "Installpocketbase",
+      "inList": true,
+      "language": "ts",
+      "originalCode": "import { download } from \"https://deno.land/x/download/mod.ts\";\nawait download(\"https://github.com/pocketbase/pocketbase/releases/download/v0.22.21/pocketbase_0.22.21_darwin_amd64.zip\", {dir: \"/tmp\", file: 'pocketbase.zip'});\nawait $`unzip -o /tmp/pocketbase.zip -d /tmp/`;\nawait $`mv /tmp/pocketbase ./_pocketbase`;\nconst exists = $.path('./_pocketbase').isFileSync()\n$.log(`Pocketbase installed: ${exists}`);\n",
+      "sourceMap": {
+        "codeStartLine": 98,
+        "codeEndLine": 106,
+        "headingLine": 91
+      },
+      "headingLevel": 2,
+      "originalName": "Install pocketbase",
+      "description": "https://pocketbase.io/\nI have used this handy file download utility a few times now but it's disappointing to see that it was not ported to jsr. Seems like a good opportunity for a library pipe 😸\n_How do I run a checksum on the downloaded file?_\nif: /commandMissing/pocketbase",
+      "originalDescription": "https://pocketbase.io/\nI have used this handy file download utility a few times now but it's disappointing to see that it was not ported to jsr. Seems like a good opportunity for a library pipe 😸\n_How do I run a checksum on the downloaded file?_\nif: /commandMissing/pocketbase",
+      "config": {
+        "checks": [
+          "/commandMissing/pocketbase"
+        ]
+      }
+    }
+  ],
+  "rawSource": "---\ntimestamp: 2026-01-02T12:00:00Z\nname: DevEnvSetup\ndescription: A collection of notes and learnings about setting up the development environment\n---\n# DevSetup\nLet's write a script to help install all the current (non-node) dependencies and run them inside a tmux shell - let's also install tmux 😂\n\nAs always, let's use [dax](https://jsr.io/@david/dax) to handle our shell interactions:\n```ts\nimport $ from 'jsr:@david/dax';\n```\n\n## helper\nMade a small blunder here, should be `$.logError(result.stderr);` not `$.log.error(result.stderr);`\n```ts\ninput.quietUnlessError = async (cmd, successMessage, errorMessage) => {\n  const result = await $(cmd)\n  if (result.code !== 0) {\n    $.logError(result.stderr);\n    throw new Error(`${errorMessage}\n    Try it manually: ${cmd}` || `Failed: ${cmd}`);\n  }\n  $.logStep(successMessage || `Success: ${cmd}`);\n}\n```\n\n## Check if commands exist\n```ts\ninput.commandMissing = {\n  brew:       !(await $.commandExists('brew')),\n  bun:        !(await $.commandExists('bun')),\n  tmux:       !(await $.commandExists('tmux')),\n  datasette:  !(await $.commandExists('datasette')),\n  pocketbase: !($.path('./_pocketbase').isFileSync()),\n}\nconsole.log('Missing: ', input.commandMissing);\n```\n\n## Install Homebrew\n1 hour rule:  I spent an hour trying to figure how to install brew via this script but kept running up against the same error:\n`Error: Not implemented: command`\nIt seems to be failing inside the Dax library, so there's a chance we could run it by using [`Deno.Command`](https://docs.deno.com/api/deno/~/Deno.Command) manually. However, I prefer a simple outcome rather than sinking more hours into something that would only result in a marginal improvement.\n\nNotice the use of `input.errors`. Pipedown uses this array internally to display caught errors from functins (codebocks). It will then skip all subsquent functions in the file. So we are piggybacking on this behaviour to bail out of the script early. \n- if: /commandMissing/brew\n  ```ts\n  input.errors = [`Brew is not installed.\n  Please install brew manually with this command:\n  /bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"\n  and then run this script again`]\n  ```\n\n## Install bun\nI will replace this with Deno at the earliest opportunity, but so far Nuxt doesn't play nice with Deno.\n- if: /commandMissing/bun\n  ```ts\n  await input.quietUnlessError(\n    `brew install bun`, \n    \"Success: Bun installed\", \n    \"Failed: Could not install Bun\"\n  );\n  ```\n\n## Install tmux\nThe average brew stdout is noisy as hell, I want it to be quite unless there's an error. \n- if: /commandMissing/tmux\n  ```ts\n  await input.quietUnlessError(\n    `brew install tmux`, \n    \"Success: Tmux installed\", \n    \"Failed: Could not install tmux\"\n  );\n  ```\n\n## Install datasette\nhttps://docs.datasette.io/en/stable/installation.html#using-pipx\nhttps://datasette.io/plugins/datasette-import\n\nWe use Datasette to provide some additional sqlite functionality and data exploration capabilities. I'm still thinking about whether to host it alongside the app behind pocketbases auth!\n- if: /commandMissing/datasette\n  ```ts\n      const result = await $`brew install pipx; pipx ensurepath; pipx install datasette; pipx inject datasette datasette-import; pipx install sqlite-utils;`\n        .stderr(\"piped\");\n      if(result.code !== 0) {\n        $.log.error(result.stderr);\n        throw new Error(\"Failed to install Datasette\");\n      }\n      $.log(\"Datasette + dependencies installed \");\n  ```\n  \n## Install pocketbase\nhttps://pocketbase.io/\n\nI have used this handy file download utility a few times now but it's disappointing to see that it was not ported to jsr. Seems like a good opportunity for a library pipe 😸\n\n> _How do I run a checksum on the downloaded file?_ \n- if: /commandMissing/pocketbase\n  ```ts\n  import { download } from \"https://deno.land/x/download/mod.ts\";\n  await download(\"https://github.com/pocketbase/pocketbase/releases/download/v0.22.21/pocketbase_0.22.21_darwin_amd64.zip\", {dir: \"/tmp\", file: 'pocketbase.zip'});\n  await $`unzip -o /tmp/pocketbase.zip -d /tmp/`;\n  await $`mv /tmp/pocketbase ./_pocketbase`;\n  const exists = $.path('./_pocketbase').isFileSync()\n  $.log(`Pocketbase installed: ${exists}`);\n  ```\n\n"
+}

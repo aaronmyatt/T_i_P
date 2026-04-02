@@ -1,0 +1,189 @@
+{
+  "mdPath": "/Users/aaronmyatt/pipes/T_i_P/content/gsheetExporter.md",
+  "fileName": "gsheetExporter",
+  "dir": "/Users/aaronmyatt/pipes/T_i_P/.pd/content/gsheetExporter",
+  "absoluteDir": "/Users/aaronmyatt/pipes/T_i_P/.pd/content/gsheetExporter",
+  "config": {
+    "templates": [
+      "./templates/cli.ts",
+      "./templates/server.ts",
+      "./templates/worker.ts",
+      "./templates/test.ts",
+      "./templates/trace.ts",
+      "./templates/devServer.ts"
+    ],
+    "exclude": [
+      "node_modules",
+      "dist",
+      "/content/*",
+      "/frontend/*"
+    ]
+  },
+  "name": "timestamp: 2026-01-03T12:00:00Z\nname: GSheet Exporter\ndescription: A collection of notes and learnings about exporting Google Sheets as CSV files",
+  "cleanName": "timestamp20260103T120000ZnameGSheetExporterdescriptionAcollectionofnotesandlearningsaboutexportingGoogleSheetsasCSVfiles",
+  "steps": [
+    {
+      "code": "import $ from 'jsr:@david/dax';\n",
+      "range": [
+        33,
+        33
+      ],
+      "name": "Libraries",
+      "funcName": "Libraries",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "import $ from 'jsr:@david/dax';\n",
+      "sourceMap": {
+        "codeStartLine": 13,
+        "codeEndLine": 16,
+        "headingLine": 11
+      },
+      "headingLevel": 2,
+      "originalName": "Libraries",
+      "description": "We are using the [Dax library](https://jsr.io/@david/dax#shell) to handle all interactions with the command line.",
+      "originalDescription": "We are using the [Dax library](https://jsr.io/@david/dax#shell) to handle all interactions with the command line."
+    },
+    {
+      "code": "input.sheet = 'https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?gid=0#gid=0'\n",
+      "range": [
+        45,
+        45
+      ],
+      "name": "Sheet to download",
+      "funcName": "Sheettodownload",
+      "inList": true,
+      "language": "ts",
+      "originalCode": "input.sheet = 'https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?gid=0#gid=0'\n",
+      "sourceMap": {
+        "codeStartLine": 20,
+        "codeEndLine": 23,
+        "headingLine": 17
+      },
+      "headingLevel": 2,
+      "originalName": "Sheet to download",
+      "description": "Found this [example Google Sheet](https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?gid=0#gid=0) after quick search. This function is skipped if `input.sheet` is already set.\nnot: /sheet",
+      "originalDescription": "Found this [example Google Sheet](https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?gid=0#gid=0) after quick search. This function is skipped if `input.sheet` is already set.\nnot: /sheet",
+      "config": {
+        "not": [
+          "/sheet"
+        ]
+      }
+    },
+    {
+      "code": "input.format = input.format || 'csv'\ninput.fileName = `${input.exportName || 'sheet'}.${input.format}`\n",
+      "range": [
+        54,
+        54
+      ],
+      "name": "Some variables",
+      "funcName": "Somevariables",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "input.format = input.format || 'csv'\ninput.fileName = `${input.exportName || 'sheet'}.${input.format}`\n",
+      "sourceMap": {
+        "codeStartLine": 26,
+        "codeEndLine": 30,
+        "headingLine": 24
+      },
+      "headingLevel": 2,
+      "originalName": "Some variables",
+      "description": "Setup some variables to be used later. If `input.format` is not set, we default to `csv`. If `input.exportName` is not set, we default to `sheet`.",
+      "originalDescription": "Setup some variables to be used later. If `input.format` is not set, we default to `csv`. If `input.exportName` is not set, we default to `sheet`."
+    },
+    {
+      "code": "input.exportUrl = new URL('https://docs.google.com/spreadsheets')\ninput.pattern = new URLPattern('https://docs.google.com/spreadsheets/d/:id/edit?gid=:gid#gid=:gid')\n",
+      "range": [
+        82,
+        82
+      ],
+      "name": "Download gsheet data",
+      "funcName": "Downloadgsheetdata",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "input.exportUrl = new URL('https://docs.google.com/spreadsheets')\ninput.pattern = new URLPattern('https://docs.google.com/spreadsheets/d/:id/edit?gid=:gid#gid=:gid')\n",
+      "sourceMap": {
+        "codeStartLine": 43,
+        "codeEndLine": 47,
+        "headingLine": 31
+      },
+      "headingLevel": 2,
+      "originalName": "Download gsheet data",
+      "description": "![Export CSV](/images/gsheetExporter/exportCsvFromGsheet.png)\nWhen we request to download a Google Sheet a very similar URL to the one we were using to view the spreadsheet can be seen in the network requests. The main differences are that the URL has `/export` appended to it. The URL also has a `format` query parameter set to `csv`. 👇\nexample export url: https://docs.google.com/spreadsheets/u/1/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/export?format=csv&id=1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms&gid=0\ncdn redirect url: https://doc-10-5c-sheets.googleusercontent.com/export/bhtpn0s58k5p00cuujrfvbqrdg/bvvqemusqkon8atd8qjbn91m30/1728659400000/100630705629414352418/112239389343096482311/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms?format=csv&id=1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms&gid=0&dat=AAt6Q5UEXD_8dRKJt0hDz1mBOkxdqciBIEgdpcXtn9cF1tZC5qf1h9bAhSVgDTJHJEMvUN5R7_Lv6tNxZSwxEqLOSMIZ8tr7NzysXn9XlTeY3WVdIZxa87Qyi9UV-6matJY7RAkfh9cZB7L7Mpxlx8dLxyuWXVhzCOJxuPsqDz5v0U6NAlZp-RU3QOvf5v3BHm8muB12sm9S2LHa5oRiSlDJUwxuvwiURxQjMHM-nQ_84FevX1D5-tY3eUqypPcdATJ6c73kG_zVMb_rrQMiuU9v9dszlEITiH6RVG2zTPNBhqzEq3Odqv-gz3jIZk32NEB5s9zxRw_NkDws83orqs_R2RB3B5ONU0tBWUFR_TMqdB4IJTOrv5MsFtye_MVdT6LAzDoVrBNjKz5QI2kt7pC53PWGu8U0wQyEcE3J3mvEbdfyNTEfqeapgyEgtHw60oEeIwSeix6LB-24tyySNo9CgfNWPQxxspiJmKupe81GXPwe6bcrawWxGDN9eXs04oyahAPa6LlDXHQuV3bRJhCMeVgsgNWvEtXnteXPBzlR1EHE8fwjRtr-McNIuFw_hgP85eMBzxdTavT8i8P0dq_P9zgGU6ElR0hjJC90UjB6hplLHUlweni7q_cp7yOnfNLJegaDsk7xZHJgTvKvjl8CRn-3rGwQrY0TUy4c7RDkcQpcPnQL_3qzD-QAsPTBg9zG_LuxKBxuzMPEF5YPDjtJtZlbwwpH08-gYZyr2lRVloi-OKgYso_PRj_J00-gthVcyKXefugDEw7FODF_5fVcdTlflCwTXXOaz05ey4m3ZsoL5bOEFMRZe0QXODPKmNnJ6ylrF00XXsmhI91XTdgFSDgtKcpEFxp_I_uuXhnr5hIfRrWTXR-Uwobkt6A4cw94suW6-uOL1qOSsD1KjesCwL-NpeIXT7j2CevBAobUZfoK9zv0gJhmXuMrJEAMOOq0fDHgRf74Xll_vQeHVogWihnCAht0JHDnetBBonHHiOXNI2w\nLet's use a [URLPattern](https://developer.mozilla.org/en-US/docs/Web/API/URLPattern) to extract out the pieces of the \"view\" URL and build a new URL to download the data.\nexportUrl will be updated with the values extracted from the pattern (`input.sheet`).",
+      "originalDescription": "![Export CSV](/images/gsheetExporter/exportCsvFromGsheet.png)\nWhen we request to download a Google Sheet a very similar URL to the one we were using to view the spreadsheet can be seen in the network requests. The main differences are that the URL has `/export` appended to it. The URL also has a `format` query parameter set to `csv`. 👇\nexample export url: https://docs.google.com/spreadsheets/u/1/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/export?format=csv&id=1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms&gid=0\ncdn redirect url: https://doc-10-5c-sheets.googleusercontent.com/export/bhtpn0s58k5p00cuujrfvbqrdg/bvvqemusqkon8atd8qjbn91m30/1728659400000/100630705629414352418/112239389343096482311/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms?format=csv&id=1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms&gid=0&dat=AAt6Q5UEXD_8dRKJt0hDz1mBOkxdqciBIEgdpcXtn9cF1tZC5qf1h9bAhSVgDTJHJEMvUN5R7_Lv6tNxZSwxEqLOSMIZ8tr7NzysXn9XlTeY3WVdIZxa87Qyi9UV-6matJY7RAkfh9cZB7L7Mpxlx8dLxyuWXVhzCOJxuPsqDz5v0U6NAlZp-RU3QOvf5v3BHm8muB12sm9S2LHa5oRiSlDJUwxuvwiURxQjMHM-nQ_84FevX1D5-tY3eUqypPcdATJ6c73kG_zVMb_rrQMiuU9v9dszlEITiH6RVG2zTPNBhqzEq3Odqv-gz3jIZk32NEB5s9zxRw_NkDws83orqs_R2RB3B5ONU0tBWUFR_TMqdB4IJTOrv5MsFtye_MVdT6LAzDoVrBNjKz5QI2kt7pC53PWGu8U0wQyEcE3J3mvEbdfyNTEfqeapgyEgtHw60oEeIwSeix6LB-24tyySNo9CgfNWPQxxspiJmKupe81GXPwe6bcrawWxGDN9eXs04oyahAPa6LlDXHQuV3bRJhCMeVgsgNWvEtXnteXPBzlR1EHE8fwjRtr-McNIuFw_hgP85eMBzxdTavT8i8P0dq_P9zgGU6ElR0hjJC90UjB6hplLHUlweni7q_cp7yOnfNLJegaDsk7xZHJgTvKvjl8CRn-3rGwQrY0TUy4c7RDkcQpcPnQL_3qzD-QAsPTBg9zG_LuxKBxuzMPEF5YPDjtJtZlbwwpH08-gYZyr2lRVloi-OKgYso_PRj_J00-gthVcyKXefugDEw7FODF_5fVcdTlflCwTXXOaz05ey4m3ZsoL5bOEFMRZe0QXODPKmNnJ6ylrF00XXsmhI91XTdgFSDgtKcpEFxp_I_uuXhnr5hIfRrWTXR-Uwobkt6A4cw94suW6-uOL1qOSsD1KjesCwL-NpeIXT7j2CevBAobUZfoK9zv0gJhmXuMrJEAMOOq0fDHgRf74Xll_vQeHVogWihnCAht0JHDnetBBonHHiOXNI2w\nLet's use a [URLPattern](https://developer.mozilla.org/en-US/docs/Web/API/URLPattern) to extract out the pieces of the \"view\" URL and build a new URL to download the data.\nexportUrl will be updated with the values extracted from the pattern (`input.sheet`)."
+    },
+    {
+      "code": "input.gogoDownload = true\ninput.tmpDirFiles = await $`ls /tmp/`.lines()\nif(input.tmpDirFiles.find(file => file === input.fileName)) {\n  input.gogoDownload = false // skip download\n  $.log(`File already exists: ${input.fileName}`)\n} else {\n  $.log(`File missing, let's download it: ${input.fileName}`)\n}\n",
+      "range": [
+        89,
+        89
+      ],
+      "name": "Check if file already exists",
+      "funcName": "Checkiffilealreadyexists",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "input.gogoDownload = true\ninput.tmpDirFiles = await $`ls /tmp/`.lines()\nif(input.tmpDirFiles.find(file => file === input.fileName)) {\n  input.gogoDownload = false // skip download\n  $.log(`File already exists: ${input.fileName}`)\n} else {\n  $.log(`File missing, let's download it: ${input.fileName}`)\n}\n",
+      "sourceMap": {
+        "codeStartLine": 50,
+        "codeEndLine": 60,
+        "headingLine": 48
+      },
+      "headingLevel": 2,
+      "originalName": "Check if file already exists",
+      "description": "To save us from doing unnecessary work, we can check if the file already exists in the `/tmp/` directory. If it does, we can skip the next download steps.",
+      "originalDescription": "To save us from doing unnecessary work, we can check if the file already exists in the `/tmp/` directory. If it does, we can skip the next download steps."
+    },
+    {
+      "code": "const url = input.pattern.exec(input.sheet)\nconst [id, gid, hash] = [$p.get(url, '/pathname/groups/id'), $p.get(url, '/search/groups/gid'), $p.get(url, '/hash/input')]\ninput.exportUrl.searchParams.set('format', input.format)\ninput.exportUrl.searchParams.set('id', id)\ninput.exportUrl.searchParams.set('gid', gid)\ninput.exportUrl.hash = hash\ninput.exportUrl.pathname = input.exportUrl.pathname+`/u/1/d/${id}/export`\n$.log(`Export URL: ${input.exportUrl}\\n`)\n",
+      "range": [
+        101,
+        101
+      ],
+      "name": "Build the download URL",
+      "funcName": "BuildthedownloadURL",
+      "inList": true,
+      "language": "ts",
+      "originalCode": "const url = input.pattern.exec(input.sheet)\nconst [id, gid, hash] = [$p.get(url, '/pathname/groups/id'), $p.get(url, '/search/groups/gid'), $p.get(url, '/hash/input')]\ninput.exportUrl.searchParams.set('format', input.format)\ninput.exportUrl.searchParams.set('id', id)\ninput.exportUrl.searchParams.set('gid', gid)\ninput.exportUrl.hash = hash\ninput.exportUrl.pathname = input.exportUrl.pathname+`/u/1/d/${id}/export`\n$.log(`Export URL: ${input.exportUrl}\\n`)\n",
+      "sourceMap": {
+        "codeStartLine": 64,
+        "codeEndLine": 74,
+        "headingLine": 61
+      },
+      "headingLevel": 2,
+      "originalName": "Build the download URL",
+      "description": "Extract the `id`, `gid`, and `hash` from the `input.sheet` URL and update the `exportUrl` with the new values.\nif: /gogoDownload",
+      "originalDescription": "Extract the `id`, `gid`, and `hash` from the `input.sheet` URL and update the `exportUrl` with the new values.\nif: /gogoDownload",
+      "config": {
+        "checks": [
+          "/gogoDownload"
+        ]
+      }
+    },
+    {
+      "code": "input.curlResult = await $`curl -L -o /tmp/${input.fileName} ${input.exportUrl}`\n$.log(`File downloaded: ${input.fileName}`)\n",
+      "range": [
+        115,
+        115
+      ],
+      "name": "Download the file",
+      "funcName": "Downloadthefile",
+      "inList": true,
+      "language": "ts",
+      "originalCode": "input.curlResult = await $`curl -L -o /tmp/${input.fileName} ${input.exportUrl}`\n$.log(`File downloaded: ${input.fileName}`)\n",
+      "sourceMap": {
+        "codeStartLine": 79,
+        "codeEndLine": 83,
+        "headingLine": 76
+      },
+      "headingLevel": 2,
+      "originalName": "Download the file",
+      "description": "Download the file using `curl` and save it to `/tmp/` directory.\nif: /gogoDownload",
+      "originalDescription": "Download the file using `curl` and save it to `/tmp/` directory.\nif: /gogoDownload",
+      "config": {
+        "checks": [
+          "/gogoDownload"
+        ]
+      }
+    }
+  ],
+  "rawSource": "---\ntimestamp: 2026-01-03T12:00:00Z\nname: GSheet Exporter\ndescription: A collection of notes and learnings about exporting Google Sheets as CSV files\n---\n# GSheet Exporter\nDownload a public Google Sheet as a CSV file. Optionally, you can specify the format and the file name via the following input parameters:\n- `sheet`: The URL of the Google Sheet to download.\n- `format`: The format of the file to download. Default is `csv`.\n- `exportName`: The name of the file to download. Default is `sheet` (results in `sheet.csv`).\n\n## Libraries\nWe are using the [Dax library](https://jsr.io/@david/dax#shell) to handle all interactions with the command line.\n```ts\nimport $ from 'jsr:@david/dax';\n```\n\n## Sheet to download\nFound this [example Google Sheet](https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?gid=0#gid=0) after quick search. This function is skipped if `input.sheet` is already set.\n- not: /sheet\n  ```ts\n  input.sheet = 'https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?gid=0#gid=0'\n  ```\n\n## Some variables\nSetup some variables to be used later. If `input.format` is not set, we default to `csv`. If `input.exportName` is not set, we default to `sheet`.\n```ts\ninput.format = input.format || 'csv'\ninput.fileName = `${input.exportName || 'sheet'}.${input.format}`\n```\n\n## Download gsheet data\n\n![Export CSV](/images/gsheetExporter/exportCsvFromGsheet.png)\n\nWhen we request to download a Google Sheet a very similar URL to the one we were using to view the spreadsheet can be seen in the network requests. The main differences are that the URL has `/export` appended to it. The URL also has a `format` query parameter set to `csv`. 👇\n\n- example export url: https://docs.google.com/spreadsheets/u/1/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/export?format=csv&id=1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms&gid=0\n- cdn redirect url: https://doc-10-5c-sheets.googleusercontent.com/export/bhtpn0s58k5p00cuujrfvbqrdg/bvvqemusqkon8atd8qjbn91m30/1728659400000/100630705629414352418/112239389343096482311/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms?format=csv&id=1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms&gid=0&dat=AAt6Q5UEXD_8dRKJt0hDz1mBOkxdqciBIEgdpcXtn9cF1tZC5qf1h9bAhSVgDTJHJEMvUN5R7_Lv6tNxZSwxEqLOSMIZ8tr7NzysXn9XlTeY3WVdIZxa87Qyi9UV-6matJY7RAkfh9cZB7L7Mpxlx8dLxyuWXVhzCOJxuPsqDz5v0U6NAlZp-RU3QOvf5v3BHm8muB12sm9S2LHa5oRiSlDJUwxuvwiURxQjMHM-nQ_84FevX1D5-tY3eUqypPcdATJ6c73kG_zVMb_rrQMiuU9v9dszlEITiH6RVG2zTPNBhqzEq3Odqv-gz3jIZk32NEB5s9zxRw_NkDws83orqs_R2RB3B5ONU0tBWUFR_TMqdB4IJTOrv5MsFtye_MVdT6LAzDoVrBNjKz5QI2kt7pC53PWGu8U0wQyEcE3J3mvEbdfyNTEfqeapgyEgtHw60oEeIwSeix6LB-24tyySNo9CgfNWPQxxspiJmKupe81GXPwe6bcrawWxGDN9eXs04oyahAPa6LlDXHQuV3bRJhCMeVgsgNWvEtXnteXPBzlR1EHE8fwjRtr-McNIuFw_hgP85eMBzxdTavT8i8P0dq_P9zgGU6ElR0hjJC90UjB6hplLHUlweni7q_cp7yOnfNLJegaDsk7xZHJgTvKvjl8CRn-3rGwQrY0TUy4c7RDkcQpcPnQL_3qzD-QAsPTBg9zG_LuxKBxuzMPEF5YPDjtJtZlbwwpH08-gYZyr2lRVloi-OKgYso_PRj_J00-gthVcyKXefugDEw7FODF_5fVcdTlflCwTXXOaz05ey4m3ZsoL5bOEFMRZe0QXODPKmNnJ6ylrF00XXsmhI91XTdgFSDgtKcpEFxp_I_uuXhnr5hIfRrWTXR-Uwobkt6A4cw94suW6-uOL1qOSsD1KjesCwL-NpeIXT7j2CevBAobUZfoK9zv0gJhmXuMrJEAMOOq0fDHgRf74Xll_vQeHVogWihnCAht0JHDnetBBonHHiOXNI2w\n\nLet's use a [URLPattern](https://developer.mozilla.org/en-US/docs/Web/API/URLPattern) to extract out the pieces of the \"view\" URL and build a new URL to download the data.\n\nexportUrl will be updated with the values extracted from the pattern (`input.sheet`).\n```ts\ninput.exportUrl = new URL('https://docs.google.com/spreadsheets')\ninput.pattern = new URLPattern('https://docs.google.com/spreadsheets/d/:id/edit?gid=:gid#gid=:gid')\n```\n\n## Check if file already exists\nTo save us from doing unnecessary work, we can check if the file already exists in the `/tmp/` directory. If it does, we can skip the next download steps.\n```ts\ninput.gogoDownload = true\ninput.tmpDirFiles = await $`ls /tmp/`.lines()\nif(input.tmpDirFiles.find(file => file === input.fileName)) {\n  input.gogoDownload = false // skip download\n  $.log(`File already exists: ${input.fileName}`)\n} else {\n  $.log(`File missing, let's download it: ${input.fileName}`)\n}\n```\n\n## Build the download URL\nExtract the `id`, `gid`, and `hash` from the `input.sheet` URL and update the `exportUrl` with the new values.\n- if: /gogoDownload\n  ```ts\n  const url = input.pattern.exec(input.sheet)\n  const [id, gid, hash] = [$p.get(url, '/pathname/groups/id'), $p.get(url, '/search/groups/gid'), $p.get(url, '/hash/input')]\n  input.exportUrl.searchParams.set('format', input.format)\n  input.exportUrl.searchParams.set('id', id)\n  input.exportUrl.searchParams.set('gid', gid)\n  input.exportUrl.hash = hash\n  input.exportUrl.pathname = input.exportUrl.pathname+`/u/1/d/${id}/export`\n  $.log(`Export URL: ${input.exportUrl}\\n`)\n  ```\n  \n\n## Download the file\nDownload the file using `curl` and save it to `/tmp/` directory.\n- if: /gogoDownload\n  ```ts\n  input.curlResult = await $`curl -L -o /tmp/${input.fileName} ${input.exportUrl}`\n  $.log(`File downloaded: ${input.fileName}`)\n  ```\n"
+}

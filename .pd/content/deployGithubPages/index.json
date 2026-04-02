@@ -1,0 +1,206 @@
+{
+  "mdPath": "/Users/aaronmyatt/pipes/T_i_P/content/deployGithubPages.md",
+  "fileName": "deployGithubPages",
+  "dir": "/Users/aaronmyatt/pipes/T_i_P/.pd/content/deployGithubPages",
+  "absoluteDir": "/Users/aaronmyatt/pipes/T_i_P/.pd/content/deployGithubPages",
+  "config": {
+    "templates": [
+      "./templates/cli.ts",
+      "./templates/server.ts",
+      "./templates/worker.ts",
+      "./templates/test.ts",
+      "./templates/trace.ts",
+      "./templates/devServer.ts"
+    ],
+    "exclude": [
+      "node_modules",
+      "dist",
+      "/content/*",
+      "/frontend/*"
+    ]
+  },
+  "name": "timestamp: 2026-01-05T12:00:00Z",
+  "cleanName": "timestamp20260105T120000Z",
+  "steps": [
+    {
+      "code": "import $ from 'jsr:@david/dax';\n",
+      "range": [
+        13,
+        13
+      ],
+      "name": "Libraries",
+      "funcName": "Libraries",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "import $ from 'jsr:@david/dax';\n",
+      "sourceMap": {
+        "codeStartLine": 9,
+        "codeEndLine": 12,
+        "headingLine": 5
+      },
+      "headingLevel": 2,
+      "originalName": "Libraries",
+      "description": "We are using the [Dax library](https://jsr.io/@david/dax#shell) to handle all interactions with the command line.",
+      "originalDescription": "We are using the [Dax library](https://jsr.io/@david/dax#shell) to handle all interactions with the command line."
+    },
+    {
+      "code": "const gitIgnorePath = $.path(Deno.cwd()).join(\".gitignore\");\ntry {\n    const gitIgnore = Deno.readTextFileSync(gitIgnorePath);\n    input.toBeIgnored = gitIgnore.split(\"\\n\").map((glob) => std.globToRegExp(glob));\n} catch (_e) {\n    // probably no .gitignore file\n    input.toBeIgnored = [];\n}\n",
+      "range": [
+        17,
+        17
+      ],
+      "name": "read gitignore so we can exclude later",
+      "funcName": "readgitignoresowecanexcludelater",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "const gitIgnorePath = $.path(Deno.cwd()).join(\".gitignore\");\ntry {\n    const gitIgnore = Deno.readTextFileSync(gitIgnorePath);\n    input.toBeIgnored = gitIgnore.split(\"\\n\").map((glob) => std.globToRegExp(glob));\n} catch (_e) {\n    // probably no .gitignore file\n    input.toBeIgnored = [];\n}\n",
+      "sourceMap": {
+        "codeStartLine": 15,
+        "codeEndLine": 25,
+        "headingLine": 13
+      },
+      "headingLevel": 2,
+      "originalName": "read gitignore so we can exclude later"
+    },
+    {
+      "code": "await $`git checkout pages || git checkout -b pages`\n",
+      "range": [
+        21,
+        21
+      ],
+      "name": "Checkout pages branch",
+      "funcName": "Checkoutpagesbranch",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "await $`git checkout pages || git checkout -b pages`\n",
+      "sourceMap": {
+        "codeStartLine": 27,
+        "codeEndLine": 30,
+        "headingLine": 26
+      },
+      "headingLevel": 2,
+      "originalName": "Checkout pages branch"
+    },
+    {
+      "code": "await $`git merge main`\n",
+      "range": [
+        25,
+        25
+      ],
+      "name": "merge main into pages",
+      "funcName": "mergemainintopages",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "await $`git merge main`\n",
+      "sourceMap": {
+        "codeStartLine": 32,
+        "codeEndLine": 35,
+        "headingLine": 31
+      },
+      "headingLevel": 2,
+      "originalName": "merge main into pages"
+    },
+    {
+      "code": "await $`bun gen`\n",
+      "range": [
+        32,
+        32
+      ],
+      "name": "Build the site",
+      "funcName": "Buildthesite",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "await $`bun gen`\n",
+      "sourceMap": {
+        "codeStartLine": 38,
+        "codeEndLine": 41,
+        "headingLine": 36
+      },
+      "headingLevel": 2,
+      "originalName": "Build the site",
+      "description": "We rename the default nuxi generate command as it conflicts with `bun generate`.",
+      "originalDescription": "We rename the default nuxi generate command as it conflicts with `bun generate`."
+    },
+    {
+      "code": "await $`mkdir -p /tmp/pagescontent`\nawait $`cp -r .output/public /tmp/pagescontent`\n",
+      "range": [
+        36,
+        36
+      ],
+      "name": "copy build to tmp folder",
+      "funcName": "copybuildtotmpfolder",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "await $`mkdir -p /tmp/pagescontent`\nawait $`cp -r .output/public /tmp/pagescontent`\n",
+      "sourceMap": {
+        "codeStartLine": 43,
+        "codeEndLine": 47,
+        "headingLine": 42
+      },
+      "headingLevel": 2,
+      "originalName": "copy build to tmp folder"
+    },
+    {
+      "code": "const files = await Array.fromAsync($.path(Deno.cwd()).readDirFilePaths());\nfor (const file of files) {\n    if (input.toBeIgnored.some((ignore) => ignore.test(file))) continue;\n    if (file.basename().startsWith(\".\")) continue;\n    await $.path(file).remove();\n}\n",
+      "range": [
+        43,
+        43
+      ],
+      "name": "remove all files in the pages branch",
+      "funcName": "removeallfilesinthepagesbranch",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "const files = await Array.fromAsync($.path(Deno.cwd()).readDirFilePaths());\nfor (const file of files) {\n    if (input.toBeIgnored.some((ignore) => ignore.test(file))) continue;\n    if (file.basename().startsWith(\".\")) continue;\n    await $.path(file).remove();\n}\n",
+      "sourceMap": {
+        "codeStartLine": 51,
+        "codeEndLine": 59,
+        "headingLine": 48
+      },
+      "headingLevel": 2,
+      "originalName": "remove all files in the pages branch",
+      "description": "Originally we would `rm -rf ./*` everything but this also removes the `.git` directory so we can't do that.\nSo we'll be more selective, respect .gitignore and avoid hidden files.",
+      "originalDescription": "Originally we would `rm -rf ./*` everything but this also removes the `.git` directory so we can't do that.\nSo we'll be more selective, respect .gitignore and avoid hidden files."
+    },
+    {
+      "code": "const files = await Array.fromAsync($.path('/tmp/pagescontent').readDirFilePaths());\nfor (const file of files) {\n    await $.path(file).copyToDir(Deno.cwd());\n}\n",
+      "range": [
+        91,
+        91
+      ],
+      "name": "copy files from tmp folder to pages branch",
+      "funcName": "copyfilesfromtmpfoldertopagesbranch",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "const files = await Array.fromAsync($.path('/tmp/pagescontent').readDirFilePaths());\nfor (const file of files) {\n    await $.path(file).copyToDir(Deno.cwd());\n}\n",
+      "sourceMap": {
+        "codeStartLine": 73,
+        "codeEndLine": 79,
+        "headingLine": 60
+      },
+      "headingLevel": 2,
+      "originalName": "copy files from tmp folder to pages branch",
+      "description": "The difference between recursively copying (`cp`) with and without a trailing slash is important to understand:\nWithout trailing slash: `cp -r /tmp/pagescontent .`\nThis copies the `pagescontent` directory itself and its contents into the current directory.\nResult: You'll have a new directory named `pagescontent` in the current directory.\nWith trailing slash: `cp -r /tmp/pagescontent/ .`\nThis copies only the contents of the `pagescontent` directory into the current directory.\nResult: The contents of `pagescontent` will be directly in the current directory, without creating a new `pagescontent` directory.\nThis all sounds good and well 👆 but it's not working. In practice it either copies the top level folder, or nothing at all.",
+      "originalDescription": "The difference between recursively copying (`cp`) with and without a trailing slash is important to understand:\nWithout trailing slash: `cp -r /tmp/pagescontent .`\nThis copies the `pagescontent` directory itself and its contents into the current directory.\nResult: You'll have a new directory named `pagescontent` in the current directory.\nWith trailing slash: `cp -r /tmp/pagescontent/ .`\nThis copies only the contents of the `pagescontent` directory into the current directory.\nResult: The contents of `pagescontent` will be directly in the current directory, without creating a new `pagescontent` directory.\nThis all sounds good and well 👆 but it's not working. In practice it either copies the top level folder, or nothing at all."
+    },
+    {
+      "code": "const outputFiles = await Array.fromAsync($.path('/tmp/pagescontent').readDirFilePaths());\nconst files = await Array.fromAsync($.path(Deno.cwd()).readDirFilePaths());\nfor (const file of files) {\n    if(outputFiles.find(outputFile => outputFile.basename() === file.basename()))\n        await $.path(file).remove();\n}\n",
+      "range": [
+        103,
+        103
+      ],
+      "name": "remove all output files",
+      "funcName": "removealloutputfiles",
+      "inList": false,
+      "language": "ts",
+      "originalCode": "const outputFiles = await Array.fromAsync($.path('/tmp/pagescontent').readDirFilePaths());\nconst files = await Array.fromAsync($.path(Deno.cwd()).readDirFilePaths());\nfor (const file of files) {\n    if(outputFiles.find(outputFile => outputFile.basename() === file.basename()))\n        await $.path(file).remove();\n}\n",
+      "sourceMap": {
+        "codeStartLine": 93,
+        "codeEndLine": 101,
+        "headingLine": 92
+      },
+      "headingLevel": 2,
+      "originalName": "remove all output files"
+    }
+  ],
+  "rawSource": "---\ntimestamp: 2026-01-05T12:00:00Z\n---\n# Github Pages Deployment\n\n## Libraries\n\nWe are using the [Dax library](https://jsr.io/@david/dax#shell) to handle all interactions with the command line.\n\n```ts\nimport $ from 'jsr:@david/dax';\n```\n\n## read gitignore so we can exclude later\n\n```ts\nconst gitIgnorePath = $.path(Deno.cwd()).join(\".gitignore\");\ntry {\n    const gitIgnore = Deno.readTextFileSync(gitIgnorePath);\n    input.toBeIgnored = gitIgnore.split(\"\\n\").map((glob) => std.globToRegExp(glob));\n} catch (_e) {\n    // probably no .gitignore file\n    input.toBeIgnored = [];\n}\n```\n\n## Checkout pages branch\n```ts\nawait $`git checkout pages || git checkout -b pages`\n```\n\n## merge main into pages\n```ts\nawait $`git merge main`\n```\n\n## Build the site\nWe rename the default nuxi generate command as it conflicts with `bun generate`.\n```ts\nawait $`bun gen`\n```\n\n## copy build to tmp folder\n```ts\nawait $`mkdir -p /tmp/pagescontent`\nawait $`cp -r .output/public /tmp/pagescontent`\n```\n\n## remove all files in the pages branch\nOriginally we would `rm -rf ./*` everything but this also removes the `.git` directory so we can't do that.\nSo we'll be more selective, respect .gitignore and avoid hidden files.\n```ts\nconst files = await Array.fromAsync($.path(Deno.cwd()).readDirFilePaths());\nfor (const file of files) {\n    if (input.toBeIgnored.some((ignore) => ignore.test(file))) continue;\n    if (file.basename().startsWith(\".\")) continue;\n    await $.path(file).remove();\n}\n```\n\n## copy files from tmp folder to pages branch\nThe difference between recursively copying (`cp`) with and without a trailing slash is important to understand:\n\n1. Without trailing slash: `cp -r /tmp/pagescontent .`\n   - This copies the `pagescontent` directory itself and its contents into the current directory.\n   - Result: You'll have a new directory named `pagescontent` in the current directory.\n\n2. With trailing slash: `cp -r /tmp/pagescontent/ .`\n   - This copies only the contents of the `pagescontent` directory into the current directory.\n   - Result: The contents of `pagescontent` will be directly in the current directory, without creating a new `pagescontent` directory.\n\n> This all sounds good and well 👆 but it's not working. In practice it either copies the top level folder, or nothing at all.\n\n```ts\nconst files = await Array.fromAsync($.path('/tmp/pagescontent').readDirFilePaths());\nfor (const file of files) {\n    await $.path(file).copyToDir(Deno.cwd());\n}\n```\n\n## commit and push\n```ts skip\nawait $`git add .`\nawait $`git commit -m \"deploy to github pages\"`\nawait $`git push origin pages -f`\n```\n\n## checkout main branch\n```ts skip\nawait $`git checkout main`\n```\n\n## remove all output files\n```ts\nconst outputFiles = await Array.fromAsync($.path('/tmp/pagescontent').readDirFilePaths());\nconst files = await Array.fromAsync($.path(Deno.cwd()).readDirFilePaths());\nfor (const file of files) {\n    if(outputFiles.find(outputFile => outputFile.basename() === file.basename()))\n        await $.path(file).remove();\n}\n```\n\n## restore all deleted files\n```ts skip\nawait $`git restore .`\n```\n\n## delete pages branch\n```ts skip\nawait $`git branch -D pages`\n```"
+}

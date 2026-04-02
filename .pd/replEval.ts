@@ -1,4 +1,9 @@
 import { default as start, process as startProcess } from "start";
+import { default as DevEnvSetup, process as DevEnvSetupProcess } from "DevEnvSetup";
+import { default as deployToGithubPages, process as deployToGithubPagesProcess } from "deployToGithubPages";
+import { default as gsheetExporter, process as gsheetExporterProcess } from "gsheetExporter";
+import { default as deployGithubPages, process as deployGithubPagesProcess } from "deployGithubPages";
+import { default as wikiWallpaperAutomater, process as wikiWallpaperAutomaterProcess } from "wikiWallpaperAutomater";
 import { default as extractBlurb, process as extractBlurbProcess } from "extractBlurb";
 import { default as extractFrontmatter, process as extractFrontmatterProcess } from "extractFrontmatter";
 // ── Pointer library ──
@@ -277,6 +282,26 @@ const runStart = (input) => run(start, input);
 const testStart = () => test(start);
 const stepStart = () => step(start);
 const tracedStart = (input) => traced(start, input);
+const runDevEnvSetup = (input) => run(DevEnvSetup, input);
+const testDevEnvSetup = () => test(DevEnvSetup);
+const stepDevEnvSetup = () => step(DevEnvSetup);
+const tracedDevEnvSetup = (input) => traced(DevEnvSetup, input);
+const runDeployToGithubPages = (input) => run(deployToGithubPages, input);
+const testDeployToGithubPages = () => test(deployToGithubPages);
+const stepDeployToGithubPages = () => step(deployToGithubPages);
+const tracedDeployToGithubPages = (input) => traced(deployToGithubPages, input);
+const runGsheetExporter = (input) => run(gsheetExporter, input);
+const testGsheetExporter = () => test(gsheetExporter);
+const stepGsheetExporter = () => step(gsheetExporter);
+const tracedGsheetExporter = (input) => traced(gsheetExporter, input);
+const runDeployGithubPages = (input) => run(deployGithubPages, input);
+const testDeployGithubPages = () => test(deployGithubPages);
+const stepDeployGithubPages = () => step(deployGithubPages);
+const tracedDeployGithubPages = (input) => traced(deployGithubPages, input);
+const runWikiWallpaperAutomater = (input) => run(wikiWallpaperAutomater, input);
+const testWikiWallpaperAutomater = () => test(wikiWallpaperAutomater);
+const stepWikiWallpaperAutomater = () => step(wikiWallpaperAutomater);
+const tracedWikiWallpaperAutomater = (input) => traced(wikiWallpaperAutomater, input);
 const runExtractBlurb = (input) => run(extractBlurb, input);
 const testExtractBlurb = () => test(extractBlurb);
 const stepExtractBlurb = () => step(extractBlurb);
@@ -289,6 +314,11 @@ const tracedExtractFrontmatter = (input) => traced(extractFrontmatter, input);
 // ── Pipe registry (for help and introspection) ──
 const _pipes = {
   "start": start,
+  "DevEnvSetup": DevEnvSetup,
+  "deployToGithubPages": deployToGithubPages,
+  "gsheetExporter": gsheetExporter,
+  "deployGithubPages": deployGithubPages,
+  "wikiWallpaperAutomater": wikiWallpaperAutomater,
   "extractBlurb": extractBlurb,
   "extractFrontmatter": extractFrontmatter,
 };
